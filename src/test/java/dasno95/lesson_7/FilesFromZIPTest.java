@@ -2,9 +2,12 @@ package dasno95.lesson_7;
 
 import com.codeborne.pdftest.PDF;
 import com.codeborne.xlstest.XLS;
+import com.opencsv.CSVReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -34,6 +37,17 @@ public class FilesFromZIPTest {
         }
 
         //csv
-
+        ZipEntry zipEntryCSV = zip.getEntry("CSV_file.csv");
+        try(InputStream isCSV = zip.getInputStream(zipEntryCSV)) {
+            CSVReader reader = new CSVReader(new InputStreamReader(isCSV));
+            List<String[]> list = reader.readAll();
+            assertThat(list)
+                    .hasSize(3)
+                    .contains(
+                            new String[] {"Flower", "Colour"},
+                            new String[] {"Rose", "Red"},
+                            new String[] {"Tulip", "Yellow"}
+                    );
+        }
     }
 }
